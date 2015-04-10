@@ -19,6 +19,7 @@ _.*
 .*_homedir
 .*_groups
 .*_shell
+.*_pgroup
 desc_option_.*
 AR
 AS
