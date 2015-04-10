@@ -7,10 +7,9 @@ pkg=$1; shift
 [ -z "$pkg" ] && pkg=$(basename $PWD)
 version=$(./xbps-src show "$pkg" | sed -n '/^version/s/[^:]*:[\t]*//p')
 
-if [ -n "$(git ls-files srcpkgs/"$pkg"/template)" ]; then
-	msg="$pkg: update to $version."
-else
-	msg="New package: $pkg-$version"
+if [ -z "$version" ]; then
+	echo cannot parse version
+	exit 1
 fi
 
 spkpattern=$(xsubpkg "$pkg" | tr '\n' '|' | sed 's/\(.*\)|/^(\1)$/')
@@ -27,4 +26,11 @@ dirs=$(./xbps-src show "$pkg" |
 	sed -n '/^\(pkgname\|subpackage\)/s/[^:]*:[\t]*/srcpkgs\//p')
 
 git add $dirs
+
+if git diff --quiet --cached --diff-filter=A -- srcpkgs/"$pkg"/template; then
+	msg="$pkg: update to $version."
+else
+	msg="New package: $pkg-$version"
+fi
+
 git commit -m "$msg" "$@" $dirs

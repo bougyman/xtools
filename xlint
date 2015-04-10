@@ -16,8 +16,9 @@ once() {
 variables=$(echo -n "#.*
 _.*
 .*_descr
-.*_homedir
 .*_groups
+.*_homedir
+.*_pgroup
 .*_shell
 .*_pgroup
 desc_option_.*
@@ -45,6 +46,7 @@ broken
 build_pie
 build_options
 build_options_default
+build_pie
 build_style
 build_wrksrc
 checksum
@@ -60,6 +62,7 @@ distfiles
 dkms_modules
 font_dirs
 force_debug_pkgs
+go_import_path
 homepage
 hostmakedepends
 keep_libtool_archives
@@ -68,6 +71,7 @@ lib32depends
 lib32disabled
 lib32files
 lib32mode
+lib32symlinks
 license
 maintainer
 make_build_args
@@ -81,6 +85,7 @@ mutable_files
 noarch
 nocross
 nodebug
+noshlibprovides
 nostrip
 nostrip_files
 noverifyrdeps
@@ -133,8 +138,9 @@ for template; do
 	scan '^  ' "indent with tabs" | once
 	scan '[\t ]$' "trailing whitespace"
 	scan '`' "use \$() instead of backticks"
-	scan 'replaces=[^<>]*$' "replaces needs depname with version"
-	scan 'conflicts=[^<>]*$' "conflicts needs depname with version"
+	scan 'revision=0' "revision must not be zero"
+	scan 'replaces=(?=.*\w)[^<>]*$' "replaces needs depname with version"
+	scan 'conflicts=(?=.*\w)[^<>]*$' "conflicts needs depname with version"
 	scan 'maintainer=(?!.*<.*@.*>).*' "maintainer needs email address"
 	scan 'nonfree=' "use repository=nonfree"
 	scan '^(?!\s*('"$variables"'))[^\s=-]+=' \
